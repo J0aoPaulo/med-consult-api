@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import med.voll.api.endereco.Endereco;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Table(name = "medicos")
