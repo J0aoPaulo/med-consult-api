@@ -6,7 +6,6 @@ import med.voll.api.paciente.DadosPaciente;
 import med.voll.api.paciente.Paciente;
 import med.voll.api.paciente.PacienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
