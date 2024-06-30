@@ -1,6 +1,9 @@
 package med.voll.api.controller;
 
 import jakarta.validation.Valid;
+import med.voll.api.domain.paciente.DadosCompletosPaciente;
+import med.voll.api.domain.paciente.Paciente;
+import med.voll.api.domain.paciente.PacienteRepository;
 import med.voll.api.paciente.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -48,7 +51,7 @@ public class PacienteController {
 
     @PutMapping
     @Transactional
-    public ResponseEntity<DadosCompletosPaciente> listarTodosPacientes(@RequestBody @Valid DadosAtualizadosPaciente dadosPaciente) {
+    public ResponseEntity<DadosCompletosPaciente> atualizarPaciente(@RequestBody @Valid DadosAtualizadosPaciente dadosPaciente) {
         var paciente = repository.getReferenceById(dadosPaciente.id());
         paciente.atualizarDados(dadosPaciente);
 
