@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import med.voll.api.endereco.DadosEndereco;
 import med.voll.api.endereco.Endereco;
 
+import java.util.Optional;
+
 @Table(name = "pacientes")
 @Entity(name = "Paciente")
 @Getter
@@ -32,5 +34,11 @@ public class Paciente {
         this.telefone = dadosPaciente.telefone();
         this.cpf = dadosPaciente.cpf();
         this.endereco = new Endereco(dadosPaciente.endereco());
+    }
+
+    public void atualizarDados(DadosAtualizadosPaciente dados) {
+        this.nome = Optional.ofNullable(dados.nome()).orElse(this.nome);
+        this.telefone = Optional.ofNullable(dados.telefone()).orElse(this.telefone);
+        this.endereco.atualizarEndereco(dados.endereco());
     }
 }

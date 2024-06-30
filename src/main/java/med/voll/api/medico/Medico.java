@@ -45,8 +45,7 @@ public class Medico {
     public void atualizarInformacoes(DadosAtualizadosMedico dadosUpdated) {
         this.nome = Optional.ofNullable(dadosUpdated.nome()).orElse(this.nome);
         this.telefone = Optional.ofNullable(dadosUpdated.telefone()).orElse(this.telefone);
-        if (dadosUpdated.endereco() != null)
-            this.endereco.atualizarEndereco(dadosUpdated.endereco());
+        this.endereco.atualizarEndereco(dadosUpdated.endereco());
     }
 
     public void inativar() {

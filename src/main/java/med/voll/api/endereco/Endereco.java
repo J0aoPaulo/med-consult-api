@@ -32,12 +32,14 @@ public class Endereco {
     }
 
     public void atualizarEndereco(DadosEndereco dadosUpdated) {
-        this.logradouro = Optional.ofNullable(dadosUpdated.logradouro()).orElse(this.logradouro);
-        this.bairro = Optional.ofNullable(dadosUpdated.bairro()).orElse(this.bairro);
-        this.cep = Optional.ofNullable(dadosUpdated.cep()).orElse(this.cep);
-        this.uf = Optional.ofNullable(dadosUpdated.uf()).orElse(this.uf);
-        this.cidade = Optional.ofNullable(dadosUpdated.cidade()).orElse(this.cidade);
-        this.numero = Optional.ofNullable(dadosUpdated.numero()).orElse(this.numero);
-        this.complemento = Optional.ofNullable(dadosUpdated.complemento()).orElse(this.complemento);
+        if (dadosUpdated != null) {
+            this.logradouro = Optional.ofNullable(dadosUpdated.logradouro()).orElse(this.logradouro);
+            this.bairro = Optional.ofNullable(dadosUpdated.bairro()).orElse(this.bairro);
+            this.cep = Optional.ofNullable(dadosUpdated.cep()).orElse(this.cep);
+            this.uf = Optional.ofNullable(dadosUpdated.uf()).orElse(this.uf);
+            this.cidade = Optional.ofNullable(dadosUpdated.cidade()).orElse(this.cidade);
+            this.numero = Optional.ofNullable(dadosUpdated.numero()).orElse(this.numero);
+            this.complemento = Optional.ofNullable(dadosUpdated.complemento()).orElse(this.complemento);
+        }
     }
 }
