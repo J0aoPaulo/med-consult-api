@@ -18,13 +18,17 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class PacienteController {
 
     @Autowired
-    PacienteRepository repository;
+    PacienteRepository pacienteRepository;
+
+    public PacienteController(PacienteRepository pacienteRepository) {
+        this.pacienteRepository = pacienteRepository;
+    }
 
     @PostMapping
     @Transactional
     public ResponseEntity<DadosCompletosPaciente> salvarPaciente(@RequestBody @Valid DadosPaciente dadosPaciente) {
         Paciente paciente = new Paciente(dadosPaciente);
-        repository.save(paciente);
+        pacienteRepository.save(paciente);
 
         var uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("{/id}")
@@ -36,14 +40,14 @@ public class PacienteController {
 
     @GetMapping("/{id}")
     public ResponseEntity<DadosCompletosPaciente> listarPaciente(@PathVariable Long id) {
-        var paciente = repository.getReferenceById(id);
+        var paciente = pacienteRepository.getReferenceById(id);
 
         return ResponseEntity.ok(new DadosCompletosPaciente(paciente));
     }
 
     @GetMapping
     public ResponseEntity<Page<DadosCompletosPaciente>> listarTodosPacientes(Pageable pageable) {
-        var page = repository.findAll(pageable).map(DadosCompletosPaciente::new);
+        var page = pacienteRepository.findAll(pageable).map(DadosCompletosPaciente::new);
 
         return ResponseEntity.ok(page);
     }
@@ -51,7 +55,7 @@ public class PacienteController {
     @PutMapping
     @Transactional
     public ResponseEntity<DadosCompletosPaciente> atualizarPaciente(@RequestBody @Valid DadosAtualizadosPaciente dadosPaciente) {
-        var paciente = repository.getReferenceById(dadosPaciente.id());
+        var paciente = pacienteRepository.getReferenceById(dadosPaciente.id());
         paciente.atualizarDados(dadosPaciente);
 
         return ResponseEntity.ok(new DadosCompletosPaciente(paciente));
@@ -60,8 +64,8 @@ public class PacienteController {
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<Void> excluirPaciente(@PathVariable Long id) {
-        var paciente = repository.getReferenceById(id);
-        repository.delete(paciente);
+        var paciente = pacienteRepository.getReferenceById(id);
+        pacienteRepository.delete(paciente);
 
         return ResponseEntity.noContent().build();
     }
