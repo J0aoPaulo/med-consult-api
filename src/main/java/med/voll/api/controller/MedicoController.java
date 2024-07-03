@@ -17,7 +17,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping("medicos")
 public class MedicoController {
 
-    @Autowired
     private final MedicoRepository medicoRepository;
 
     public MedicoController (MedicoRepository medicoRepository) {
