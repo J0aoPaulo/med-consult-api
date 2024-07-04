@@ -1,4 +1,4 @@
-# MedConsultAPI
+# API REST de consultas médicas
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring](https://img.shields.io/badge/Spring_Boot-F2F4F9?style=for-the-badge&logo=spring-boot)
 ![Spring-security](https://img.shields.io/badge/Spring_Security-6DB50F?style=for-the-badge&logo=Spring-Security&logoColor=white)
