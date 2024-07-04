@@ -17,6 +17,7 @@ dados de médicos, pacientes e consultas.
 - **Gerenciamento de Pacientes:** Cadastro, atualização e remoção de informações de pacientes.
 - **Gerenciamento de Consultas:** Agendamento, atualização e cancelamento de consultas médicas.
 - **Segurança:** Configuração de autenticação e autorização utilizando Spring Security e o padrão JWT.
+## Instalação
 
 1. Clone o repositório:
 
