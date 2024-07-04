@@ -1,42 +1,46 @@
 package med.voll.api.infra.security;
 
+import jakarta.annotation.Nullable;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import med.voll.api.exceptions.MissingHeaderException;
-import org.springframework.beans.factory.annotation.Autowired;
+import med.voll.api.domain.usuario.UsuarioRepository;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private TokenService tokenService;
+    private final TokenService tokenService;
+    private final UsuarioRepository usuarioRepository;
+
+    public SecurityFilter(TokenService token, UsuarioRepository repository) {
+        this.tokenService = token;
+        this.usuarioRepository = repository;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
-        if ("/login".equals(request.getRequestURI())) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         var tokenJWT = recuperarToken(request);
-        var subject = tokenService.getSubject(tokenJWT);
-        System.out.println(subject);
+        if (tokenJWT != null) {
+            var subject = tokenService.getSubject(tokenJWT);
+            var usuario = usuarioRepository.findByLogin(subject);
+
+            var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
 
         filterChain.doFilter(request, response);
     }
 
+    @Nullable
     private String recuperarToken(HttpServletRequest request) {
-        var authorizationHeader =  Optional.ofNullable(request.getHeader("Authorization"))
-                .orElseThrow(() -> new MissingHeaderException("tokenJWT não enviado no cabeçalho authorization"));
-
-        return authorizationHeader.replace("Bearer ", "");
+        var authorizationHeader = request.getHeader("Authorization");
+        return  authorizationHeader != null ? authorizationHeader.replace("Bearer ", "") : null;
     }
 }
