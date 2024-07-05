@@ -2,16 +2,10 @@ package med.voll.api.controller;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import med.voll.api.domain.consulta.Consulta;
-import med.voll.api.domain.consulta.ConsultaService;
-import med.voll.api.domain.consulta.DadosCadastroConsulta;
-import med.voll.api.domain.consulta.DadosConsulta;
+import med.voll.api.domain.consulta.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -38,5 +32,12 @@ public class ConsultaController {
                         consultaAgendada.getMedico().getId(),
                         consultaAgendada.getPaciente().getId(),
                         consultaAgendada.getDataConsulta()));
+    }
+
+    @DeleteMapping
+    @Transactional
+    public ResponseEntity<DadosCancelarConsulta> cancelarConsulta(@RequestBody @Valid DadosCancelarConsulta dados) {
+        consultaService.cancelarConsulta(dados);
+        return ResponseEntity.noContent().build();
     }
 }

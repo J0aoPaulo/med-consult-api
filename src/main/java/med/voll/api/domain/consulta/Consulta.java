@@ -30,4 +30,10 @@ public class Consulta {
     private Paciente paciente;
 
     private LocalDateTime dataConsulta;
+
+    public Consulta(Medico medico, Paciente paciente, LocalDateTime dataConsulta) {
+        this.medico = medico;
+        this.paciente = paciente;
+        this.dataConsulta = dataConsulta;
+    }
 }

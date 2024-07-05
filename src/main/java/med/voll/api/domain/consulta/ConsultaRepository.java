@@ -6,5 +6,6 @@ import java.time.LocalDateTime;
 
 public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 
-    //void deleteByIdPacienteAndDataConsulta(Long idPaciente, LocalDateTime dataConsulta);
+    boolean existsByDataConsulta(LocalDateTime dataConsulta);
+    Consulta findByPacienteIdAndMedicoIdAndDataConsulta(Long idMedico, Long IdPaciente, LocalDateTime localDateTime);
 }

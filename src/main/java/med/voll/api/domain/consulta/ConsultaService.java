@@ -3,10 +3,9 @@ package med.voll.api.domain.consulta;
 import med.voll.api.domain.medico.Medico;
 import med.voll.api.domain.medico.MedicoRepository;
 import med.voll.api.domain.paciente.PacienteRepository;
+import med.voll.api.infra.exception.exceptions.AppointNotFoundException;
 import med.voll.api.infra.exception.exceptions.IdNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class ConsultaService {
@@ -22,7 +21,7 @@ public class ConsultaService {
     }
 
     public Consulta agendarConsulta(DadosConsulta dados) {
-        verificarExistenciaMedicoPaciente(dados);
+        verificarExistenciaMedicoPaciente(dados.idPaciente(), dados.idMedico());
 
         var paciente = pacienteRepository.getReferenceById(dados.idPaciente());
         var medico = selecionarMedico(dados);
@@ -31,11 +30,15 @@ public class ConsultaService {
         return consulta;
     }
 
-    /*public void cancelarConsulta(DadosCancelarConsulta dadosCancelamento) {
-        var consultaCancelada = new DadosCancelarConsulta(dadosCancelamento);
+    public void cancelarConsulta(DadosCancelarConsulta dadosCancelamento) {
+        verificarExistenciaMedicoPaciente(dadosCancelamento.idPaciente(), dadosCancelamento.idMedico());
+        verificarExistenciaConsulta(dadosCancelamento);
 
-        consultaRepository.deleteByIdPacienteAndDataConsulta(consultaCancelada.idPaciente(), consultaCancelada.dataConsulta());
-    }*/
+        var paciente = pacienteRepository.getReferenceById(dadosCancelamento.idPaciente());
+        var medico = medicoRepository.getReferenceById(dadosCancelamento.idMedico());
+        var consulta = consultaRepository.findByPacienteIdAndMedicoIdAndDataConsulta(medico.getId(), paciente.getId(), dadosCancelamento.dataConsulta());
+        consultaRepository.delete(consulta);
+    }
 
     private Medico selecionarMedico(DadosConsulta dadosConsulta) {
         if(dadosConsulta.idMedico() != null)
@@ -44,11 +47,18 @@ public class ConsultaService {
         return medicoRepository.escolherMedicoAleatorioDisponivel(dadosConsulta.especialidade(), dadosConsulta.dataConsulta());
     }
 
-    private void verificarExistenciaMedicoPaciente(DadosConsulta dadosConsulta) {
-        if (!pacienteRepository.existsById(dadosConsulta.idPaciente()))
-            throw new IdNotFoundException("Id paciente não encontrado no banco de dados");
+    private void verificarExistenciaConsulta(DadosCancelarConsulta dados) {
+        boolean consultaExiste = consultaRepository.existsByDataConsulta(dados.dataConsulta());
 
-        if (dadosConsulta.idMedico() != null && !medicoRepository.existsById(dadosConsulta.idMedico()))
-            throw new IdNotFoundException("Id do médico não encontrado no banco de dados");
+        if (!consultaExiste)
+            throw new AppointNotFoundException("Consulta médica não encontrada no banco de dados");
+    }
+
+    private void verificarExistenciaMedicoPaciente(Long idPaciente, Long idMedico) {
+        if (!pacienteRepository.existsById(idPaciente))
+            throw new IdNotFoundException("Dados do paciente não encontrados no banco de dados");
+
+        if (idMedico!= null && !medicoRepository.existsById(idMedico))
+            throw new IdNotFoundException("Dados do médico não encontrados no banco de dados");
     }
 }
