@@ -1,4 +1,4 @@
-package med.voll.api.exceptions;
+package med.voll.api.infra.exception.exceptions;
 
 public class MissingHeaderException extends RuntimeException{
 
