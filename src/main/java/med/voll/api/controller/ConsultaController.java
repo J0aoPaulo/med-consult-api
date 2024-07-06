@@ -27,11 +27,7 @@ public class ConsultaController {
                 .buildAndExpand(consultaAgendada.getId())
                 .toUri();
 
-        return ResponseEntity.created(uri)
-                .body(new DadosCadastroConsulta(null,
-                        consultaAgendada.getMedico().getId(),
-                        consultaAgendada.getPaciente().getId(),
-                        consultaAgendada.getDataConsulta()));
+        return ResponseEntity.created(uri).body(new DadosCadastroConsulta(consultaAgendada));
     }
 
     @DeleteMapping
