@@ -13,8 +13,6 @@ public record DadosConsulta(
         Long idPaciente,
         @NotNull
         @Future
-        @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
         LocalDateTime dataConsulta,
-        @NotNull(message = "{especialidade.obrigatoria}")
         Especialidade especialidade) {
 }

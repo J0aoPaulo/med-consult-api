@@ -56,8 +56,8 @@ public class TratadorDeErros {
     }
 
     @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<String> tratarMissingHeaderError(ExpiredJwtException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token JWT expirado");
+    public ResponseEntity<String> tratarMissingHeaderError(ExpiredJwtException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
     private record DadosErroValidacao(String campo, String mensagem) {

@@ -1,5 +1,6 @@
 package med.voll.api.domain.consulta;
 
+import med.voll.api.domain.consulta.validacoes.ValidarAgendamentoConsulta;
 import med.voll.api.domain.medico.Medico;
 import med.voll.api.domain.medico.MedicoRepository;
 import med.voll.api.domain.paciente.PacienteRepository;
@@ -7,24 +8,29 @@ import med.voll.api.infra.exception.exceptions.AppointNotFoundException;
 import med.voll.api.infra.exception.exceptions.IdNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ConsultaService {
 
     private final ConsultaRepository consultaRepository;
     private final PacienteRepository pacienteRepository;
     private final MedicoRepository medicoRepository;
+    private final List<ValidarAgendamentoConsulta> validacoes;
 
-    public ConsultaService(ConsultaRepository consulta, MedicoRepository medico, PacienteRepository paciente) {
+    public ConsultaService(ConsultaRepository consulta, MedicoRepository medico, PacienteRepository paciente, List<ValidarAgendamentoConsulta> validacoes) {
         this.consultaRepository = consulta;
         this.medicoRepository = medico;
         this.pacienteRepository = paciente;
+        this.validacoes = validacoes;
     }
 
     public Consulta agendarConsulta(DadosConsulta dados) {
+        var medico = selecionarMedico(dados);
         verificarExistenciaMedicoPaciente(dados.idPaciente(), dados.idMedico());
+        validacoes.forEach(v -> v.validar(dados));
 
         var paciente = pacienteRepository.getReferenceById(dados.idPaciente());
-        var medico = selecionarMedico(dados);
         var consulta = new Consulta(null, medico, paciente, dados.dataConsulta());
         consultaRepository.save(consulta);
         return consulta;
@@ -41,10 +47,18 @@ public class ConsultaService {
     }
 
     private Medico selecionarMedico(DadosConsulta dadosConsulta) {
-        if(dadosConsulta.idMedico() != null)
-            return medicoRepository.getReferenceById(dadosConsulta.idMedico());
+        Medico medico;
+        if (dadosConsulta.idMedico() == null) {
+            medico = medicoRepository.escolherMedicoAleatorioDisponivel(dadosConsulta.especialidade(), dadosConsulta.dataConsulta());
+        } else {
+            medico = medicoRepository.getReferenceById(dadosConsulta.idMedico());
+        }
 
-        return medicoRepository.escolherMedicoAleatorioDisponivel(dadosConsulta.especialidade(), dadosConsulta.dataConsulta());
+        if (medico == null) {
+            throw new IdNotFoundException("Nenhum médico disponível encontrado ou ID do médico é inválido.");
+        }
+
+        return medico;
     }
 
     private void verificarExistenciaConsulta(DadosCancelarConsulta dados) {
@@ -58,7 +72,7 @@ public class ConsultaService {
         if (!pacienteRepository.existsById(idPaciente))
             throw new IdNotFoundException("Dados do paciente não encontrados no banco de dados");
 
-        if (idMedico!= null && !medicoRepository.existsById(idMedico))
+        if (idMedico != null && !medicoRepository.existsById(idMedico))
             throw new IdNotFoundException("Dados do médico não encontrados no banco de dados");
     }
 }

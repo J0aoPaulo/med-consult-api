@@ -2,8 +2,10 @@ package med.voll.api.controller;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import med.voll.api.domain.consulta.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import med.voll.api.domain.consulta.ConsultaService;
+import med.voll.api.domain.consulta.DadosCadastroConsulta;
+import med.voll.api.domain.consulta.DadosCancelarConsulta;
+import med.voll.api.domain.consulta.DadosConsulta;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -14,8 +16,11 @@ import java.net.URI;
 @RequestMapping("consultas")
 public class ConsultaController {
 
-    @Autowired
-    ConsultaService consultaService;
+    private final ConsultaService consultaService;
+
+    public ConsultaController(ConsultaService consultaService) {
+        this.consultaService = consultaService;
+    }
 
     @PostMapping
     @Transactional
